@@ -32,8 +32,11 @@ Set Up Lab
           CONTINUE
         END
         
-        Log  Copy ${SRC_DIR}/${IMG} to ${DST_DIR}/${vm}.qcow2  console=True
-        Copy File   ${SRC_DIR}/${IMG}   ${DST_DIR}/${vm}.qcow2
+        ${imgfile} =    Set Variable If    'installer' in ${ROLES['${vm}']}
+        ...    ${INSTALLER_IMG}
+        ...    ${IMG}
+        Log  Copy ${SRC_DIR}/${imgfile} to ${DST_DIR}/${vm}.qcow2  console=True
+        Copy File   ${SRC_DIR}/${imgfile}   ${DST_DIR}/${vm}.qcow2
 
         Log        Resize the image to ${DISK}[${vm}]G.    console=True
         ${rc} =     Run And Return Rc
@@ -42,7 +45,7 @@ Set Up Lab
 
         Log        Resize root partition to 100%.        console=True
         ${rc} =     Run And Return Rc
-        ...     virt-resize --expand /dev/sda1 ${SRC_DIR}/${IMG} ${DST_DIR}/${vm}.qcow2
+        ...     virt-resize --expand /dev/sda1 ${SRC_DIR}/${imgfile} ${DST_DIR}/${vm}.qcow2
         Should Be Equal As Integers     ${rc}   0
 
         ${rc}   ${uuid} =   Run And Return Rc And Output
@@ -56,8 +59,8 @@ Set Up Lab
         ...     Run And Return Rc    virsh define ${TEMPDIR}/xml
         Should Be Equal As Integers     ${rc}   0
 
-        Log     Create disk for ${vm}    console=True
-        Create Disk     ${vm}
+        Log     Attach disk for ${vm}    console=True
+        Attach Disk     ${vm}
 
         Log     Attach interfaces to ${vm}        console=True
         Create Interfaces        ${vm}  ${IPS}[${vm}]
@@ -100,7 +103,7 @@ Create XML
     ...     sed -e 's/NAME/${vm}/;s/UUID/${uuid}/;s/MEM/${MEM}[${vm}]/;s/CORES/${CORES}[${vm}]/' data/${tpl} > ${TEMPDIR}/xml
     Should Be Equal As Integers     ${rc}   0
 
-Create Disk
+Attach Disk
     [Arguments]     ${vm}
     Run     virsh attach-disk ${vm} ${DST_DIR}/${vm}.qcow2 sda --driver qemu --subdriver qcow2 --targetbus scsi --persistent
 

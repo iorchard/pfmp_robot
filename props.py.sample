@@ -1,13 +1,10 @@
 #!/usr/bin/env python
-import os
-
-# user account in VM.
 USERID = 'clex'
 PREFIX = 'pfmp-'
 
 # VM location
-SRC_DIR = '/home/' + USERID + '/images'
-DST_DIR = '/home/' + USERID + '/vms' + '/' + PREFIX + 'lab'
+SRC_DIR = '/home/clex/images'
+DST_DIR = '/home/clex/vms/' + PREFIX + 'lab'
 
 # machine list.
 VMS = [
@@ -47,8 +44,6 @@ NET = {
         'mgmt':     '192.168.21',
         'storage':  '192.168.24',
 }
-NETMASK = '24'
-MGMT_GW = NET['mgmt'] + '.1'
 IP = 75  # The last octet of the IP address to begin.
 # Management network bridge name
 MGMT_BR = 'br_mgmt'
@@ -65,23 +60,17 @@ for vmname in VMS:
     IPS[vmname] = {}
     IPS[vmname][MGMT_BR] = {
         'ip': NET['mgmt'] + '.' + str(IP+i),
-        'nm': NETMASK,
-        'gw': MGMT_GW,
+        'nm': 24,
+        'gw': '192.168.21.74',
     }
     if 'worker' in ROLES[vmname]:
       IPS[vmname][STRG_BR] = {
           'ip': NET['storage'] + '.' + str(IP+i),
-          'nm': NETMASK,
+          'nm': 24,
       }
     i += 1
 
-OS = 'ROCKY'
-BURRITO_VER = '2.1.5'
-ROCKY_VER = '8.10'
-ROCKY_ARCH = 'x86_64'
-ROCKY_IMG_URL = ''
-IMG = 'Burrito-GenericCloud-{}_{}-{}.qcow2'\
-              .format(BURRITO_VER, ROCKY_VER, ROCKY_ARCH)
-
-SSHKEY = os.environ.get('HOME') + '/.ssh/id_rsa'
-
+OS = 'Rocky Linux 8.10'
+INSTALLER_IMG = 'pfmp-installer.qcow2'
+IMG = 'pfmp.qcow2'
+SSHKEY = '/home/clex' + '/.ssh/id_rsa'
