@@ -60,15 +60,11 @@ then
     exit 1
 fi
 
-# DNS server
-DNSSERVER="8.8.8.8"
-# Timezone
-TIMEZONE="Asia/Seoul"
-
 # Do not edit below!!!
 $VIRTC -v -x -a ${IMGFILE} \
     --hostname ${HOSTN} \
     --upload data/hosts:/etc/hosts \
     $(for i in $(ls /tmp/ifcfg-eth*);do echo --upload $i:/etc/sysconfig/network-scripts;done) \
     --ssh-inject ${USERID} \
+    --run-command "sed -i 's/^#Port 22/Port ${SSHPORT}/' /etc/ssh/sshd_config" \
     --firstboot-command "echo nameserver ${DNSSERVER} > /etc/resolv.conf && chattr +i /etc/resolv.conf"

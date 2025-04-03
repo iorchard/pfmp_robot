@@ -49,6 +49,10 @@ IP = 75  # The last octet of the IP address to begin.
 MGMT_BR = 'br_mgmt'
 # storage network bridge name
 STRG_BR = 'br_storage'
+# ssh port
+SSHPORT = 22
+# name server
+DNSSERVER = '8.8.8.8'
 
 #
 # Do not edit below this line!!!

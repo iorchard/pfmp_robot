@@ -14,6 +14,8 @@ ${MACGEN}       ${CURDIR}/scripts/macgen.sh
 Set Up Lab
     [Documentation]     Set up virtual machines.
     [Tags]    takeoff
+    Set Environment Variable    SSHPORT    ${SSHPORT}
+    Set Environment Variable    DNSSERVER    ${DNSSERVER}
     Run     echo "127.0.0.1 localhost"|sudo tee data/hosts
     Log     \n      console=True
     FOR     ${vm}   IN  @{VMS}
